@@ -1,0 +1,17 @@
+/* Footer styles */
+.footer {
+    width: 100%;
+    background-color: #333; /* Dark background color */
+    color: white;           /* White text color */
+    text-align: center;     /* Center the text */
+    padding: 15px 0;        /* Slightly reduced padding to match the header */
+    position: fixed;
+    bottom: 0;              /* Stick the footer to the bottom of the page */
+    left: 0;
+    font-size: 14px;        /* Slightly smaller text for footer */
+  }
+    
+  .footer-text {
+    margin: 0;  /* Remove any default margin */
+  }
+  

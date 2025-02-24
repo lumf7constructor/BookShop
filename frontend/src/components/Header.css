@@ -1,0 +1,21 @@
+/* Header styles */
+.header-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0; /* No padding */
+    margin: 0;  /* No margin */
+    background-color: transparent;  /* No background color */
+    height: auto; /* Shrinks to logo size */
+}
+
+.logo-link {
+    text-decoration: none; /* No underline on the logo */
+}
+
+.logo {
+    width: 300px; /* Logo width smaller */
+    height: auto; /* Maintain aspect ratio */
+    cursor: pointer; /* Makes it clickable */
+}
