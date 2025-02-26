@@ -28,6 +28,16 @@ app.get("/", (req, res) => {
   res.send("Bookshop API is running...");
 });
 
+app.get("/books", (req, res) => {
+  db.query("SELECT title FROM book", (err, results) => {
+    if (err) {
+      res.status(500).json({ error: "Database query failed" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
