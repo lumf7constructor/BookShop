@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../pictures/bookstore-logo.png'; // Update the path to your logo image
-import './Header.css'; // Ensure this is correctly linking the CSS
+import logo from '../pictures/bookstore-logo.png'; 
+import './Header.css'; 
 
 
 const Header = () => {

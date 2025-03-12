@@ -28,18 +28,25 @@ app.get("/", (req, res) => {
   res.send("Bookshop API is running...");
 });
 
+
+// API to fetch books
 app.get("/books", (req, res) => {
-  db.query("SELECT title FROM book", (err, results) => {
-    if (err) {
-      res.status(500).json({ error: "Database query failed" });
-    } else {
-      res.json(results);
-    }
-  });
+    const query = "SELECT book_id, title, author, price FROM book";
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        // Add cover image path dynamically
+        results.forEach(book => {
+            book.cover_image = `http://localhost:5000/book_covers/${book.title}.jpg`;
+        });
+
+        res.json(results);
+    });
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start the server
+app.listen(5000, () => {
+    console.log("Server running on port 5000");
 });
