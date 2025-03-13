@@ -28,10 +28,17 @@ app.get("/", (req, res) => {
   res.send("Bookshop API is running...");
 });
 
-// API to fetch books with sorting
+// API to fetch books with sorting and search
 app.get("/books", (req, res) => {
   const sort = req.query.sort; // Get the sort query parameter
+  const search = req.query.search || ''; // Get the search query parameter (default to empty string if not provided)
+
   let query = "SELECT book_id, title, author, price FROM book";
+  
+  // Add search logic if the search query is provided
+  if (search) {
+    query += ` WHERE title LIKE ?`; // Filter books by title
+  }
 
   // Add sorting logic based on the query parameter
   if (sort === "title_asc") {
@@ -44,7 +51,8 @@ app.get("/books", (req, res) => {
     query += " ORDER BY price DESC";
   }
 
-  db.query(query, (err, results) => {
+  // Execute the query with the search term (if any)
+  db.query(query, [`%${search}%`], (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -54,7 +62,7 @@ app.get("/books", (req, res) => {
       book.cover_image = `http://localhost:5000/book_covers/${book.title}.jpg`;
     });
 
-    res.json(results); // Send sorted results to the client
+    res.json(results); // Send sorted and filtered results to the client
   });
 });
 

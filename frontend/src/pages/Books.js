@@ -4,38 +4,80 @@ import '../styles/Books.css';
 
 const Book = () => {
   const [books, setBooks] = useState([]);
-  const [sortOption, setSortOption] = useState(''); // Track the selected sorting option
+  const [filteredBooks, setFilteredBooks] = useState([]);
+  const [sortOption, setSortOption] = useState('');
+  const [searchQuery, setSearchQuery] = useState(''); // Track the search query
+  const [suggestions, setSuggestions] = useState([]); // Track search suggestions
 
   // Fetch books with sorting option
   useEffect(() => {
-    fetch(`http://localhost:5000/books?sort=${sortOption}`) // Pass the selected sort option
+    fetch(`http://localhost:5000/books?sort=${sortOption}`)
       .then(response => response.json())
       .then(data => {
-        console.log("Fetched books:", data);
         setBooks(data);  // Store the books data
+        setFilteredBooks(data);  // Initially show all books
       })
       .catch(error => console.error("Error fetching books:", error));
-  }, [sortOption]); // Re-fetch books whenever the sort option changes
+  }, [sortOption]);
+
+  // Handle search input and suggestions
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    // Filter books by title based on the search query
+    const filtered = books.filter(book => book.title.toLowerCase().includes(query));
+    setFilteredBooks(filtered);
+
+    // Show suggestions based on the search query
+    const suggestionsList = books
+      .filter(book => book.title.toLowerCase().includes(query))
+      .map(book => book.title);
+    setSuggestions(suggestionsList);
+  };
 
   return (
     <div>
       <Navbar /> {/* Include the Navbar */}
       <h1>Book List</h1>
-      
-      {/* Sorting options */}
-      <div className="sort-options">
-        <label>Sort By: </label>
-        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-          <option value="">Select</option>
-          <option value="title_asc">Title (A to Z)</option>
-          <option value="title_desc">Title (Z to A)</option>
-          <option value="price_asc">Price (Low to High)</option>
-          <option value="price_desc">Price (High to Low)</option>
-        </select>
+
+      {/* Sort and Search bar container */}
+      <div className="sort-search-container">
+        {/* Sorting options */}
+        <div className="sort-options">
+          <label>Sort By: </label>
+          <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+            <option value="">Select</option>
+            <option value="title_asc">Title (A to Z)</option>
+            <option value="title_desc">Title (Z to A)</option>
+            <option value="price_asc">Price (Low to High)</option>
+            <option value="price_desc">Price (High to Low)</option>
+          </select>
+        </div>
+
+        {/* Search bar */}
+        <div className="search-container">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search for books..."
+            className="search-bar"
+          />
+          {suggestions.length > 0 && searchQuery && (
+            <ul className="suggestions-list">
+              {suggestions.map((suggestion, index) => (
+                <li key={index} onClick={() => setSearchQuery(suggestion)} className="suggestion-item">
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
 
       <div className="book-list">
-        {books.map(book => {
+        {filteredBooks.map(book => {
           const coverImage = `/book_covers/${book.title.replace(/\s+/g, '')}.jpg`;
 
           return (

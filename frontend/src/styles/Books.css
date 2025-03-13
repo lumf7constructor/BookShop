@@ -52,57 +52,121 @@
     background-color: #0056b3;
   }
   
-  .sort-options {
-    display: flex;
-    justify-content: flex-start; /* Align the dropdown to the left */
-    align-items: center;
-    margin-top: -20px; /* Move it slightly upwards */
-    margin-left: 20px; /* Add some left margin */
-  }
-  
-  .sort-options label {
-    font-size: 1.2rem;
-    color: #333; /* Dark text color for the label */
-    margin-right: 10px;
-    font-weight: bold;
-  }
-  
-  .sort-options select {
-    padding: 12px 20px;
-    font-size: 1rem;
-    border: 2px solid #ffcc00; /* Gold border */
-    border-radius: 5px;
-    background-color: #fff;
-    color: #333; /* Dark text for better contrast */
-    cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
-    width: 200px; /* Set a fixed width for consistency */
-  }
-  
-  .sort-options select:hover {
-    background-color: #f9f9f9; /* Light grey background on hover */
-    border-color: #e6b800; /* Darker gold border on hover */
-  }
-  
-  .sort-options select:focus {
-    outline: none; /* Remove the outline on focus */
-    background-color: #e6f7ff; /* Light blue background when focused */
-    border-color: #007bff; /* Royal blue border on focus */
-  }
-  
-  .sort-options option {
-    font-size: 1rem;
-    padding: 10px;
-    background-color: #fff;
-    color: #333;
-  }
-  
-  .sort-options option:hover {
-    background-color: #f2f2f2; /* Light grey background on hover */
-  }
-  
-  .sort-options select option:checked {
-    background-color: #ffcc00; /* Gold background for selected option */
-    color: #fff; /* White text when selected */
-  }
-  
+/* Styling for sort and search bar container */
+.sort-search-container {
+  display: flex;
+  justify-content: space-between; /* Space out the elements */
+  align-items: center;
+  margin-top: -20px; /* Adjust margin */
+  margin-left: 20px;
+  width: 100%; /* Ensure full width */
+  padding-right: 20px; /* Add right padding for space */
+}
+
+/* Sorting options */
+.sort-options {
+  display: flex;
+  align-items: center;
+}
+
+.sort-options label {
+  font-size: 1.2rem;
+  color: #333;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.sort-options select {
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: 2px solid #ffcc00; /* Gold border */
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  width: 200px;
+}
+
+.sort-options select:hover {
+  background-color: #f9f9f9;
+  border-color: #e6b800;
+}
+
+.sort-options select:focus {
+  outline: none;
+  background-color: #e6f7ff;
+  border-color: #007bff;
+}
+
+.sort-options option {
+  font-size: 1rem;
+  padding: 10px;
+  background-color: #fff;
+  color: #333;
+}
+
+.sort-options option:hover {
+  background-color: #f2f2f2;
+}
+
+.sort-options select option:checked {
+  background-color: #ffcc00;
+  color: #fff;
+}
+
+/* Styling for search bar */
+.search-container {
+  display: flex;
+  width: 40%; /* Set the width of the search bar */
+  position: relative; /* Allow absolute positioning of suggestions */
+  right: 425px;
+}
+
+.search-bar {
+  padding: 10px 15px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 400px;
+  border: 2px solid #ffcc00; /* Gold border */
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.search-bar:focus {
+  outline: none;
+  background-color: #e6f7ff;
+  border-color: #007bff;
+}
+
+/* Suggestions List */
+.suggestions-list {
+  position: absolute;
+  top: 100%; /* Position it right under the search bar */
+  width: 100%; /* Make suggestions list as wide as the search bar */
+  background-color: #fff;
+  border: 2px solid #ffcc00;
+  border-radius: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 5px; /* Add a slight margin to separate the list from the input */
+}
+
+.suggestion-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.suggestion-item:hover {
+  background-color: #f2f2f2;
+}
+
+.suggestion-item:active {
+  background-color: #ffcc00;
+  color: #fff;
+}
