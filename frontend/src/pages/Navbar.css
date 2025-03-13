@@ -1,0 +1,32 @@
+.nav-bar {
+  position: fixed;
+  top: 250px; /* Adjust to position the navbar below the header */
+  right: 0;
+  background-color: #1f3a6e; /* Deep magical royal blue background */
+  padding: 12px 20px;
+  z-index: 1000; /* Ensure navbar is above other content */
+  border-radius: 5px 0 0 5px; /* Rounded corners for elegance */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Very subtle shadow for depth */
+}
+
+.nav-bar a {
+  color: #f7c600; /* Gold text color */
+  padding: 10px 15px;
+  text-decoration: none; /* Remove underline from links */
+  font-size: 18px; /* Increased font size */
+  font-weight: bold; /* Bold font for emphasis */
+  transition: background-color 0.3s, color 0.3s, text-shadow 0.3s; /* Smooth transition for hover */
+  text-shadow: 0 0 1px white; /* Light white glowing shadow */
+}
+
+.nav-bar a:hover {
+  background-color: #f7c600; /* Bright shimmering gold on hover */
+  color: #1f3a6e; /* Royal blue text when hovered */
+  text-shadow: 0 0 2px white; /* Slightly stronger glow on hover */
+}
+
+.nav-bar a:active {
+  background-color: #c69c6d; /* Darker gold on active/clicked */
+  color: #f7c600; /* Gold text when clicked */
+  text-shadow: none; /* No glow effect when clicked */
+}
