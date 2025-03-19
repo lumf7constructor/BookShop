@@ -127,6 +127,30 @@ app.post('/order', (req, res) => {
 });
 
 
+// API to get top 10 bestsellers
+app.get("/bestsellers", (req, res) => {
+  const query = `
+    SELECT 
+      b.book_id, 
+      b.title, 
+      b.author, 
+      b.price, 
+      COALESCE(SUM(od.quantity), 0) AS total_sold
+    FROM book b
+    LEFT JOIN order_details od ON b.book_id = od.book_id
+    GROUP BY b.book_id
+    ORDER BY total_sold DESC
+    LIMIT 10;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: "Failed to fetch bestsellers" });
+    }
+    res.json(results);
+  });
+});
+
 // Start the server
 app.listen(5000, () => {
   console.log("Server running on port 5000");
