@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
+const { v4: uuidv4 } = require("uuid"); // Changed this line
 const cors = require("cors");
 
 const app = express();
@@ -148,6 +149,55 @@ app.get("/bestsellers", (req, res) => {
       return res.status(500).json({ error: "Failed to fetch bestsellers" });
     }
     res.json(results);
+  });
+});
+
+// Fetch all books for dropdown
+app.get("/books", (req, res) => {
+  db.query("SELECT book_id, title FROM book", (err, books) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to fetch books" });
+    }
+    res.json(books);
+  });
+});
+
+// Handle review submission
+app.post("/reviews", (req, res) => {
+  const { bookTitle, customer_name, rating, review_text } = req.body;
+
+  if (!bookTitle || !customer_name || !rating) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  // Get book_id from book title
+  db.query("SELECT book_id FROM book WHERE title = ?", [bookTitle], (err, book) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to fetch book" });
+    }
+
+    if (!book.length) {
+      return res.status(400).json({ error: "Book not found" });
+    }
+
+    const book_id = book[0].book_id;
+    const review_id = uuidv4(); // Generate a UUID for review_id
+
+    // Insert review into database
+    db.query(
+      "INSERT INTO review (review_id, book_id, customer_name, rating, review_text) VALUES (?, ?, ?, ?, ?)",
+      [review_id, book_id, customer_name, rating, review_text],
+      (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: "Failed to submit review" });
+        }
+
+        res.status(201).json({ message: "Review submitted successfully!" });
+      }
+    );
   });
 });
 

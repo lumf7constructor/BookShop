@@ -1,0 +1,138 @@
+/* body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9fb;
+    color: #333;
+  } */
+  
+  .reviews-container {
+    max-width: 900px;
+    margin: 70px auto 50px auto; /* Adds 20px margin above */
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+ 
+  .reviews-heading {
+    text-align: center;
+    font-size: 2em;
+    color: #34495e;
+    margin-bottom: 20px;
+  }
+  
+  .reviews-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+  
+  /* Form Group Styles */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+  
+  input,
+  textarea,
+  select {
+    padding: 12px;
+    font-size: 1.1em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border 0.3s;
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #3498db;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .select-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .select-group select {
+    padding: 12px;
+    font-size: 1.1em;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+  }
+  
+  /* Submit Button Styles */
+  .submit-btn {
+    padding: 15px 20px;
+    font-size: 1.2em;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+  }
+  
+  .submit-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px);
+  }
+  
+  .submit-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+  }
+  
+  /* Loader Animation */
+  .submit-btn[disabled]::after {
+    content: " Loading...";
+    font-size: 1em;
+    font-weight: bold;
+  }
+  
+  .reviews-container .form-group input,
+  .reviews-container .form-group select,
+  .reviews-container .form-group textarea {
+    margin-bottom: 15px;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .reviews-container {
+      padding: 20px;
+    }
+  
+    .reviews-heading {
+      font-size: 1.8em;
+      margin-bottom: 15px;
+    }
+  
+    .reviews-form {
+      gap: 20px;
+    }
+  
+    .form-group label {
+      font-size: 1.1em;
+    }
+  
+    .submit-btn {
+      font-size: 1.1em;
+      padding: 12px 18px;
+    }
+  }
+  
