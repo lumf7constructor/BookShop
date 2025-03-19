@@ -1,0 +1,126 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Container */
+  .cart-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #262626;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Cart Title */
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  
+  /* Cart Items */
+  .cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .cart-item h2 {
+    font-size: 18px;
+  }
+  
+  .cart-item p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  /* Buttons */
+  button {
+    background: #ff6600;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+  }
+  
+  button:hover {
+    background: #e65c00;
+  }
+  
+  /* Quantity Buttons */
+  .quantity-controls button {
+    margin: 0 5px;
+    background: #4caf50;
+  }
+  
+  .quantity-controls button:hover {
+    background: #3d8b40;
+  }
+  
+  /* Remove Button */
+  .remove-btn {
+    background: #ff3333;
+  }
+  
+  .remove-btn:hover {
+    background: #cc0000;
+  }
+  
+  /* Total Price */
+  .total {
+    font-size: 22px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  /* Form */
+  .customer-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+  
+  .customer-form input {
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    background: #444;
+    color: white;
+  }
+  
+  .customer-form input::placeholder {
+    color: #bbb;
+  }
+  
+  .customer-form button {
+    margin-top: 15px;
+    padding: 12px;
+    font-size: 16px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .cart-container {
+      width: 90%;
+    }
+  
+    .cart-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  

@@ -57,7 +57,7 @@
   display: flex;
   justify-content: space-between; /* Space out the elements */
   align-items: center;
-  margin-top: -20px; /* Adjust margin */
+  margin-top: 0px; /* Adjust margin */
   margin-left: 20px;
   width: 100%; /* Ensure full width */
   padding-right: 20px; /* Add right padding for space */

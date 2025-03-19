@@ -4,7 +4,11 @@ const mysql = require("mysql2");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+
+// Enable CORS for all routes
+app.use(cors()); // This enables CORS for all routes
+
+// Middleware to parse JSON bodies
 app.use(express.json());
 
 // MySQL connection
@@ -65,6 +69,63 @@ app.get("/books", (req, res) => {
     res.json(results); // Send sorted and filtered results to the client
   });
 });
+
+// POST endpoint to place an order
+app.post('/order', (req, res) => {
+  const { session_id, customer_name, phone, address, books } = req.body;
+
+  if (!session_id || !customer_name || !phone || !address || !Array.isArray(books) || books.length === 0) {
+    return res.status(400).json({ 
+      status: 'error', 
+      message: 'Missing required fields or empty books array' 
+    });
+  }
+
+  // Insert the order into the orders table
+  const orderQuery = 'INSERT INTO orders (customer_name, phone, address) VALUES (?, ?, ?)';
+  db.query(orderQuery, [customer_name, phone, address], (err, result) => {
+    if (err) {
+      console.error("Error placing order:", err);
+      return res.status(500).json({ 
+        status: 'error',
+        message: 'Failed to place order' 
+      });
+    }
+
+    const orderId = result.insertId; // Get the order ID of the newly created order
+
+    // Prepare the books data for insertion into the order_details table
+    const orderDetails = books.map((book) => [
+      orderId,
+      book.book_id,
+      book.quantity,
+      book.price,
+    ]);
+
+    // Insert order details into the order_details table
+    const orderDetailsQuery =
+      'INSERT INTO order_details (order_id, book_id, quantity, price) VALUES ?';
+
+    db.query(orderDetailsQuery, [orderDetails], (err) => {
+      if (err) {
+        console.error("Error adding order details:", err);
+        return res.status(500).json({ 
+          status: 'error',
+          message: 'Failed to add order details' 
+        });
+      }
+
+      // Success response with a friendly message
+      res.status(200).json({ 
+        status: 'success', 
+        message: 'Order placed successfully!', 
+        orderId: orderId, 
+        confirmation: 'Your order is being processed and will be shipped soon. Thank you for shopping with us!' 
+      });
+    });
+  });
+});
+
 
 // Start the server
 app.listen(5000, () => {
