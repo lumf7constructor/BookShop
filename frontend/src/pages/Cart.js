@@ -120,7 +120,7 @@ const Cart = () => {
       <Navbar /> {/* Add Navbar if needed */}
       <h1>Your Cart</h1>
       {cart.length === 0 ? (
-        <p>Your cart is empty. Please add some books to the cart!</p>
+        <p>Your cart is empty. Please add some books to view the cart!</p>
       ) : (
         <div>
           {cart.map((book) => (
