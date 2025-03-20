@@ -5,8 +5,8 @@ import mysql.connector
 # MySQL connection
 db = mysql.connector.connect(
     host="localhost",
-    user="mern_user",  # Change if needed
-    password="your_password",  # Change if needed
+    user="mern_user",  
+    password="your_password",  
     database="bookshop"
 )
 cursor = db.cursor()

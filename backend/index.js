@@ -1,13 +1,13 @@
 require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
-const { v4: uuidv4 } = require("uuid"); // Changed this line
+const { v4: uuidv4 } = require("uuid"); 
 const cors = require("cors");
 
 const app = express();
 
 // Enable CORS for all routes
-app.use(cors()); // This enables CORS for all routes
+app.use(cors()); 
 
 // Middleware to parse JSON bodies
 app.use(express.json());

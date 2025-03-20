@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';  // Import Link here
-import Navbar from './Navbar'; // Import the Navbar component
-import "../styles/customer.css"; // Optional for additional styling
+import { Link } from 'react-router-dom';  
+import Navbar from './Navbar'; // Importing the Navbar component
+import "../styles/customer.css"; 
 
 const CustomerPage = () => {
   return (

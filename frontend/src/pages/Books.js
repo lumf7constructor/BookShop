@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "./Navbar"; // Import the Navbar component
+import Navbar from "./Navbar"; // Importing the Navbar component
 import "../styles/Books.css";
 
 const Book = () => {
@@ -10,7 +10,7 @@ const Book = () => {
   const [suggestions, setSuggestions] = useState([]); // Track search suggestions
   const [cart, setCart] = useState([]); // Cart state
 
-  const sessionId = "session-id-placeholder"; // Replace with actual session management logic
+  const sessionId = "session-id-placeholder"; 
 
   // Fetch books with sorting option
   useEffect(() => {
@@ -89,7 +89,7 @@ const Book = () => {
 
   return (
     <div>
-      <Navbar /> {/* Include the Navbar */}
+      <Navbar /> {/* Including the Navbar */}
       <h1>Books</h1>
 
       {/* Sort and Search bar container */}
