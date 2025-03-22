@@ -1,3 +1,4 @@
+/* General Page Styles */
 .customer-page {
     display: flex;
     flex-direction: column;
@@ -5,7 +6,7 @@
     justify-content: center;
     height: 100vh;
     position: relative;
-    background: url('../pictures/hpbg.jpg') no-repeat center center/cover; /* Make sure this path is correct */
+    background: url('../pictures/hpbg.jpg') no-repeat center center/cover; /* Ensure the image path is correct */
     color: white;
     text-align: center;
 }
@@ -17,31 +18,31 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.2); /* Reduced opacity for a subtle effect */
 }
 
 /* Welcome message */
 .customer-welcome {
     position: relative;
-    font-size: 20px;
+    font-size: 24px; /* Slightly larger for emphasis */
     font-weight: bold;
     margin-bottom: 20px;
-    color: goldenrod;
+    color: goldenrod; /* Bright color for visibility */
 }
 
 /* Buttons container */
 .buttons-container {
     position: relative;
     display: flex;
-    gap: 15px;
+    gap: 20px; /* Slightly increased gap for more space between buttons */
 }
 
-/* Style for buttons */
+/* Button Links */
 .button-link {
     text-decoration: none;
 }
 
-/* Updated Button Styles */
+/* Button Styles */
 .button {
     padding: 14px 24px;
     font-size: 18px;
@@ -50,13 +51,13 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: #8B6F47; /* Warm brown, fits with the background */
+    background-color: #8B6F47; /* Warm brown to match background */
     color: #F5F5F5; /* Light cream for contrast */
-    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
 }
 
 .bestsellers-btn .books-btn {
-    background-color: #6F7D8C; /* Muted blue-gray */
+    background-color: #6F7D8C; /* Muted blue-gray for bestsellers button */
 }
 
 .button:hover {
@@ -65,6 +66,7 @@
 }
 
 h1 {
-    color: #D3D3D3;
+    color: #D3D3D3; /* Light gray color for the heading */
     font-weight: bold;
+    font-size: 36px; /* Larger font size for the header */
 }
