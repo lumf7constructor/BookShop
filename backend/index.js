@@ -3,6 +3,7 @@ const express = require("express");
 const mysql = require("mysql2");
 const { v4: uuidv4 } = require("uuid"); 
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -31,6 +32,23 @@ db.connect((err) => {
 // Simple API route
 app.get("/", (req, res) => {
   res.send("Bookshop API is running...");
+});
+
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+  const query = "SELECT * FROM users WHERE username = ?";
+
+  db.query(query, [username], async (err, results) => {
+    if (err) return res.status(500).json({ error: "Server error" });
+    if (results.length === 0) return res.json({ success: false });
+
+    const user = results[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) return res.json({ success: false });
+
+    res.json({ success: true });
+  });
 });
 
 // API to fetch books with sorting and search

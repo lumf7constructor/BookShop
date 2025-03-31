@@ -10,6 +10,7 @@ import Books from './pages/Books';
 import Bestsellers from './pages/Bestsellers';
 import Reviews from './pages/Review';
 import Cart from './pages/Cart';
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/bestsellers" element={<Bestsellers />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
       <Footer />  {/* This will display the footer on all pages */}
     </Router>

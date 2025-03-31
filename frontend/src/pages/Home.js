@@ -1,12 +1,12 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 import "../styles/home.css"; // Import CSS
 
 const Home = () => {
   return (
     <div className="home-container">
       <div className="left-side">
-        <Link to="/manager" className="link">
+        <Link to="/login" className="link">
           <div className="content">
             <h2 className="section-title">Continue as Manager</h2>
           </div>
