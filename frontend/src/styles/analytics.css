@@ -1,0 +1,17 @@
+.analytics-page {
+    padding: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+  }
+  
+  .analytics-page h1 {
+    font-size: 28px;
+    color: #2a4b8d;
+  }
+  
+  .analytics-info {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #555;
+  }
+  

@@ -12,6 +12,13 @@ import Reviews from './pages/Review';
 import Cart from './pages/Cart';
 import Login from "./pages/Login";
 
+import Stocks from './pages/Stocks';
+import Orders from './pages/Orders';
+import Reviews2 from './pages/Reviews';
+import Analytics from './pages/Analytics';
+import Discounts from './pages/Discounts';
+
+
 function App() {
   return (
     <Router>
@@ -25,6 +32,11 @@ function App() {
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/stocks" element={<Stocks />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/reviews2" element={<Reviews2 />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/discounts" element={<Discounts />} />
       </Routes>
       <Footer />  {/* This will display the footer on all pages */}
     </Router>

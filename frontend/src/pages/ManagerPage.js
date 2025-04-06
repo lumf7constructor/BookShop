@@ -1,14 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Navbar2 from '../pages/Navbar2'; // Use your manager navbar
+import '../styles/manager.css'; // Optional: create this if you want custom styles
 
 const ManagerPage = () => {
   return (
     <div className="manager-page">
-      <h1>Hello, Manager</h1>
-      <nav className="nav-bar">
-        <Link to="/">Home</Link>
-        <Link to="/customer">Customer Page</Link>
-      </nav>
+      <Navbar2 />
+      <h1>Hi, this page is showing Manager Home Page.</h1>
+      <p className="manager-info">Here you'll be able to manage.</p>
     </div>
   );
 };

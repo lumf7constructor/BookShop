@@ -1,24 +1,16 @@
 .manager-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f8f9fa;
-  }
-  
-  .nav-bar {
-    margin-top: 20px;
-  }
-  
-  .nav-bar a {
-    margin: 0 15px;
-    text-decoration: none;
-    color: #c9302c;
-    font-weight: bold;
-  }
-  
-  .nav-bar a:hover {
-    text-decoration: underline;
-  }
-  
+  padding: 40px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+}
+
+.manager-page h1 {
+  font-size: 28px;
+  color: #2a4b8d;
+}
+
+.manager-info {
+  font-size: 18px;
+  margin-top: 10px;
+  color: #555;
+}

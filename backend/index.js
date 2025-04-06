@@ -56,7 +56,7 @@ app.get("/books", (req, res) => {
   const sort = req.query.sort; // Get the sort query parameter
   const search = req.query.search || ''; // Get the search query parameter (default to empty string if not provided)
 
-  let query = "SELECT book_id, title, author, price FROM book";
+  let query = "SELECT book_id, title, author, price, genre, stock_quantity, created_at FROM book";
   
   // Add search logic if the search query is provided
   if (search) {
@@ -172,14 +172,19 @@ app.get("/bestsellers", (req, res) => {
 
 // Fetch all books for dropdown
 app.get("/books", (req, res) => {
-  db.query("SELECT book_id, title FROM book", (err, books) => {
+  const query = "SELECT book_id, title, author, price, genre, stock_quantity, created_at FROM book";
+  
+  db.query(query, (err, books) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: "Failed to fetch books" });
     }
+    console.log(books); // Log the response to check what data we are getting
     res.json(books);
   });
 });
+
+
 
 // Handle review submission
 app.post("/reviews", (req, res) => {
@@ -218,6 +223,58 @@ app.post("/reviews", (req, res) => {
     );
   });
 });
+
+app.post("/api/books/", (req, res) => {
+  const { title, author, price, stock_quantity, genre } = req.body;
+
+  if (!title || !author || !price || !stock_quantity || !genre) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const query = `
+    INSERT INTO book (title, author, price, stock_quantity, genre)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(query, [title, author, price, stock_quantity, genre], (err, result) => {
+    if (err) {
+      console.error("Error inserting book:", err);
+      return res.status(500).json({ error: "Failed to add book" });
+    }
+    res.status(201).json({ message: "Book added successfully!" });
+  });
+});
+
+
+app.put("/api/books/reduce-stock", (req, res) => {
+  const { book_id, reduce_by } = req.body;
+
+  // Validate input
+  if (!book_id || !reduce_by || reduce_by <= 0) {
+    return res.status(400).json({ error: "Invalid book ID or quantity" });
+  }
+
+  const query = `
+    UPDATE book 
+    SET stock_quantity = stock_quantity - ?
+    WHERE book_id = ? AND stock_quantity >= ?
+  `;
+
+  db.query(query, [reduce_by, book_id, reduce_by], (err, result) => {
+    if (err) {
+      console.error("Error updating stock:", err);
+      return res.status(500).json({ error: "Failed to update stock" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ error: "Not enough stock or book not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Stock reduced successfully" });
+  });
+});
+
+
 
 // Start the server
 app.listen(5000, () => {
