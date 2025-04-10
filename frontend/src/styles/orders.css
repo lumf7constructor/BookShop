@@ -1,17 +1,93 @@
 .orders-page {
-    padding: 40px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-align: center;
-  }
-  
-  .orders-page h1 {
-    font-size: 28px;
-    color: #2a4b8d;
-  }
-  
-  .orders-info {
-    font-size: 18px;
-    margin-top: 10px;
-    color: #555;
-  }
-  
+  padding: 2rem;
+  background-color: #f9f9f9;
+  color: #222;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+.orders-page h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #1976d2;
+  border-bottom: 2px solid #1976d2;
+  padding-bottom: 0.5rem;
+}
+
+.order-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.order-card:hover {
+  transform: scale(1.01);
+}
+
+.order-card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #1565c0;
+}
+
+.order-card p {
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+}
+
+.order-card strong {
+  color: #333;
+}
+
+.order-card ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.order-card li {
+  background-color: #f0f0f0;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-card li::before {
+  content: '📘';
+  margin-right: 0.5rem;
+}
+
+.order-card h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: #388e3c;
+}
+
+.order-card .total {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+.export-button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.export-button:hover {
+  background-color: #1565c0;
+}

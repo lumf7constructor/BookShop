@@ -274,6 +274,92 @@ app.put("/api/books/reduce-stock", (req, res) => {
   });
 });
 
+// Add this new route to fetch full order info
+app.get('/api/orders/full-orders', (req, res) => {
+  const query = `
+    SELECT 
+      o.order_id,
+      o.customer_name,
+      o.phone,
+      o.address,
+      o.created_at,
+      b.title,
+      od.quantity,
+      od.price
+    FROM orders o
+    JOIN order_details od ON o.order_id = od.order_id
+    JOIN book b ON od.book_id = b.book_id
+    ORDER BY o.order_id DESC, od.order_detail_id ASC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching orders:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(results);
+  });
+});
+
+app.get('/api/reviews', (req, res) => {
+  const query = `
+    SELECT r.review_id, b.title, r.customer_name, r.rating, r.review_text 
+    FROM review r 
+    JOIN book b ON r.book_id = b.book_id
+  `;
+  db.query(query, (err, results) => {  
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error fetching reviews' });
+    }
+    res.json(results);
+  });
+});
+
+app.delete('/api/reviews/:reviewId', (req, res) => {
+  const { reviewId } = req.params;
+  const query = 'DELETE FROM review WHERE review_id = ?';
+  
+  db.query(query, [reviewId], (err, results) => {  
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error deleting review' });
+    }
+    res.json({ message: 'Review deleted' });
+  });
+});
+
+app.get('/api/discounts', (req, res) => {
+  const query = 'SELECT * FROM discount_code';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching discounts:', err);
+      return res.status(500).send('Server error');
+    }
+    res.json(results);
+  });
+});
+
+
+// Example for handling POST request to add a new discount
+app.post('/api/discounts', (req, res) => {
+  const { discount_code, validity_start_date, validity_end_date, discount_percentage } = req.body;
+
+  const query = 'INSERT INTO discount_code (discount_code, validity_start_date, validity_end_date, discount_percentage) VALUES (?, ?, ?, ?)';
+  db.query(query, [discount_code, validity_start_date, validity_end_date, discount_percentage], (err, result) => {
+    if (err) {
+      console.error('Error inserting discount:', err);
+      return res.status(500).send('Server error');
+    }
+    res.status(201).json({
+      discount_id: result.insertId,
+      discount_code,
+      validity_start_date,
+      validity_end_date,
+      discount_percentage,
+    });
+  });
+});
 
 
 // Start the server

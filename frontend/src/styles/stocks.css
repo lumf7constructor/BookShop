@@ -77,3 +77,9 @@
     font-weight: bold;
   }
   
+  .stocks-page-container h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
