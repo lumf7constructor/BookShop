@@ -99,7 +99,22 @@ const Stocks = () => {
           <input className="stocks-input" placeholder="Title" value={newBook.title} onChange={e => setNewBook({ ...newBook, title: e.target.value })} required />
           <input className="stocks-input" placeholder="Author" value={newBook.author} onChange={e => setNewBook({ ...newBook, author: e.target.value })} required />
           <input className="stocks-input" type="number" placeholder="Price" value={newBook.price} onChange={e => setNewBook({ ...newBook, price: e.target.value })} required />
-          <input className="stocks-input" placeholder="Genre" value={newBook.genre} onChange={e => setNewBook({ ...newBook, genre: e.target.value })} />
+          <select
+            className="stocks-input"
+            value={newBook.genre}
+            onChange={e => setNewBook({ ...newBook, genre: e.target.value })}
+            required
+          >
+            <option value="">-- Select Genre --</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Mystery & Thriller">Mystery & Thriller</option>
+            <option value="Science Fiction">Science Fiction</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Non-Fiction">Non-Fiction</option>
+            <option value="Romance">Romance</option>
+            <option value="Horror">Horror</option>
+            <option value="Classic">Classic</option>
+          </select>
           <input className="stocks-input" type="number" placeholder="Stock Quantity" value={newBook.stock_quantity} onChange={e => setNewBook({ ...newBook, stock_quantity: e.target.value })} required />
           <button className="stocks-button" type="submit">Add Book</button>
         </form>
@@ -138,6 +153,77 @@ const Stocks = () => {
           )}
         </div>
       </section>
+
+      {/* Section 3: Increase Stock */}
+      <section className="stocks-section">
+        <h2 className="stocks-section-title">Increase Book Stock</h2>
+        <div className="stocks-stock-adjust">
+          <select
+            className="stocks-select"
+            onChange={e => handleTitleChange(e.target.value)}
+            value={selectedTitle}
+          >
+            <option value="">-- Select Book --</option>
+            {books.map(book => (
+              <option key={book.book_id} value={book.title}>{book.title}</option>
+            ))}
+          </select>
+
+          {selectedBookDetails && (
+            <>
+              <p><strong>Author:</strong> {selectedBookDetails.author}</p>
+              <p><strong>Price:</strong> ${selectedBookDetails.price}</p>
+              <p><strong>Genre:</strong> {selectedBookDetails.genre}</p>
+              <p><strong>Stock:</strong> {selectedBookDetails.stock_quantity}</p>
+              <p><strong>Created At:</strong> {new Date(selectedBookDetails.created_at).toLocaleString()}</p>
+
+              <input
+                className="stocks-input"
+                type="number"
+                placeholder="Quantity to add"
+                value={deleteQuantity}
+                onChange={e => setDeleteQuantity(e.target.value)}
+                min="1"
+              />
+              <button
+                className="stocks-button"
+                onClick={async () => {
+                  if (!selectedBookDetails || !deleteQuantity || deleteQuantity <= 0) {
+                    alert("Please select a book and enter a valid quantity.");
+                    return;
+                  }
+
+                  const { book_id } = selectedBookDetails;
+                  const increase_by = parseInt(deleteQuantity);
+
+                  try {
+                    const res = await fetch('http://localhost:5000/api/books/increase-stock', {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ book_id, increase_by }),
+                    });
+
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                      setMessage('Stock increased successfully');
+                      fetchBooks();
+                      setDeleteQuantity('');
+                    } else {
+                      setMessage(data.error || "Failed to increase stock.");
+                    }
+                  } catch (error) {
+                    console.error("Error during stock increase:", error);
+                    setMessage("An error occurred while increasing stock.");
+                  }
+                }}
+              >
+                Add to Stock
+              </button>
+            </>
+          )}
+        </div>
+      </section>
+
     </div>
   );
 };

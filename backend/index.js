@@ -274,6 +274,35 @@ app.put("/api/books/reduce-stock", (req, res) => {
   });
 });
 
+app.put("/api/books/increase-stock", (req, res) => {
+  const { book_id, increase_by } = req.body;
+
+  // Validate input
+  if (!book_id || !increase_by || increase_by <= 0) {
+    return res.status(400).json({ error: "Invalid book ID or quantity" });
+  }
+
+  const query = `
+    UPDATE book 
+    SET stock_quantity = stock_quantity + ?
+    WHERE book_id = ?
+  `;
+
+  db.query(query, [increase_by, book_id], (err, result) => {
+    if (err) {
+      console.error("Error updating stock:", err);
+      return res.status(500).json({ error: "Failed to update stock" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ error: "Book not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Stock increased successfully" });
+  });
+});
+
+
 // Add this new route to fetch full order info
 app.get('/api/orders/full-orders', (req, res) => {
   const query = `
@@ -358,6 +387,59 @@ app.post('/api/discounts', (req, res) => {
       validity_end_date,
       discount_percentage,
     });
+  });
+});
+
+app.get("/api/analytics/top-books", (req, res) => {
+  const query = `
+    SELECT b.title, SUM(od.quantity) AS total_sold
+    FROM order_details od
+    JOIN book b ON od.book_id = b.book_id
+    GROUP BY od.book_id
+    ORDER BY total_sold DESC
+    LIMIT 5;
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch data" });
+    res.json(results);
+  });
+});
+
+app.get("/api/analytics/orders-per-day", (req, res) => {
+  const query = `
+    SELECT DATE(created_at) AS order_date, COUNT(*) AS total_orders
+    FROM orders
+    GROUP BY DATE(created_at)
+    ORDER BY order_date;
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch data" });
+    res.json(results);
+  });
+});
+
+app.get("/api/analytics/genre-distribution", (req, res) => {
+  const query = `
+    SELECT genre, COUNT(*) AS count
+    FROM book
+    GROUP BY genre;
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch data" });
+    res.json(results);
+  });
+});
+
+app.get("/api/analytics/low-stock", (req, res) => {
+  const query = `
+    SELECT title, author, stock_quantity
+    FROM book
+    WHERE stock_quantity < 10
+    ORDER BY stock_quantity ASC;
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch data" });
+    res.json(results);
   });
 });
 

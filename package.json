@@ -19,6 +19,7 @@
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "mysql2": "^3.13.0",
+    "recharts": "^2.15.3",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
