@@ -519,6 +519,32 @@ app.post('/validate-discount', (req, res) => {
   });
 });
 
+// Monthly Revenue
+app.get('/api/analytics/monthly-revenue', (req, res) => {
+  const query = `
+    SELECT 
+      DATE_FORMAT(o.created_at, '%Y-%m') as month,
+      CAST(SUM(od.price * od.quantity) AS DECIMAL(10,2)) as total_revenue
+    FROM orders o
+    JOIN order_details od ON o.order_id = od.order_id
+    GROUP BY DATE_FORMAT(o.created_at, '%Y-%m')
+    ORDER BY month ASC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching monthly revenue:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+    // Convert string values to numbers before sending
+    const formattedResults = results.map(row => ({
+      month: row.month,
+      total_revenue: Number(row.total_revenue)
+    }));
+    res.json(formattedResults);
+  });
+});
+
 // Start the server
 app.listen(5000, () => {
   console.log("Server running on port 5000");
