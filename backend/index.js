@@ -89,9 +89,8 @@ app.get("/books", (req, res) => {
   });
 });
 
-// POST endpoint to place an order
 app.post('/order', (req, res) => {
-  const { session_id, customer_name, phone, address, books } = req.body;
+  const { session_id, customer_name, phone, address, books, discount_code } = req.body;
 
   if (!session_id || !customer_name || !phone || !address || !Array.isArray(books) || books.length === 0) {
     return res.status(400).json({ 
@@ -100,49 +99,91 @@ app.post('/order', (req, res) => {
     });
   }
 
-  // Insert the order into the orders table
-  const orderQuery = 'INSERT INTO orders (customer_name, phone, address) VALUES (?, ?, ?)';
-  db.query(orderQuery, [customer_name, phone, address], (err, result) => {
-    if (err) {
-      console.error("Error placing order:", err);
-      return res.status(500).json({ 
-        status: 'error',
-        message: 'Failed to place order' 
-      });
-    }
+  // If discount code provided, verify it
+  let discountPercentage = 0;
+  if (discount_code) {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const discountQuery = `
+      SELECT discount_percentage 
+      FROM discount_code 
+      WHERE discount_code = ? 
+      AND validity_start_date <= ? 
+      AND validity_end_date >= ?
+    `;
 
-    const orderId = result.insertId; // Get the order ID of the newly created order
-
-    // Prepare the books data for insertion into the order_details table
-    const orderDetails = books.map((book) => [
-      orderId,
-      book.book_id,
-      book.quantity,
-      book.price,
-    ]);
-
-    // Insert order details into the order_details table
-    const orderDetailsQuery =
-      'INSERT INTO order_details (order_id, book_id, quantity, price) VALUES ?';
-
-    db.query(orderDetailsQuery, [orderDetails], (err) => {
+    db.query(discountQuery, [discount_code, currentDate, currentDate], (err, discountResults) => {
       if (err) {
-        console.error("Error adding order details:", err);
         return res.status(500).json({ 
           status: 'error',
-          message: 'Failed to add order details' 
+          message: 'Error checking discount code' 
         });
       }
 
-      // Success response with a friendly message
-      res.status(200).json({ 
-        status: 'success', 
-        message: 'Order placed successfully!', 
-        orderId: orderId, 
-        confirmation: 'Your order is being processed and will be shipped soon. Thank you for shopping with us!' 
+      if (discountResults.length > 0) {
+        discountPercentage = discountResults[0].discount_percentage;
+        proceedWithOrder();
+      } else {
+        return res.status(400).json({ 
+          status: 'error',
+          message: 'Invalid or expired discount code' 
+        });
+      }
+    });
+  } else {
+    proceedWithOrder();
+  }
+
+  function proceedWithOrder() {
+    // Insert the order into the orders table
+    const orderQuery = 'INSERT INTO orders (customer_name, phone, address, discount_code) VALUES (?, ?, ?, ?)';
+    db.query(orderQuery, [customer_name, phone, address, discount_code || null], (err, result) => {
+      if (err) {
+        console.error("Error placing order:", err);
+        return res.status(500).json({ 
+          status: 'error',
+          message: 'Failed to place order' 
+        });
+      }
+
+      const orderId = result.insertId;
+
+      // Calculate discounted prices if applicable
+      const orderDetails = books.map((book) => {
+        const originalPrice = book.price;
+        const discountedPrice = discountPercentage > 0 
+          ? originalPrice * (1 - discountPercentage / 100)
+          : originalPrice;
+
+        return [
+          orderId,
+          book.book_id,
+          book.quantity,
+          discountedPrice,
+        ];
+      });
+
+      const orderDetailsQuery =
+        'INSERT INTO order_details (order_id, book_id, quantity, price) VALUES ?';
+
+      db.query(orderDetailsQuery, [orderDetails], (err) => {
+        if (err) {
+          console.error("Error adding order details:", err);
+          return res.status(500).json({ 
+            status: 'error',
+            message: 'Failed to add order details' 
+          });
+        }
+
+        res.status(200).json({ 
+          status: 'success', 
+          message: 'Order placed successfully!', 
+          orderId: orderId,
+          discountApplied: discountPercentage > 0 ? `${discountPercentage}%` : 'None',
+          confirmation: 'Your order is being processed and will be shipped soon. Thank you for shopping with us!' 
+        });
       });
     });
-  });
+  }
 });
 
 
@@ -312,6 +353,7 @@ app.get('/api/orders/full-orders', (req, res) => {
       o.phone,
       o.address,
       o.created_at,
+      o.discount_code,
       b.title,
       od.quantity,
       od.price

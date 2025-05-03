@@ -132,3 +132,15 @@ button:hover {
       align-items: flex-start;
   }
 }
+
+.error-message {
+  color: #ff0000;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.success-message {
+  color: #008000;
+  font-size: 0.9em;
+  margin-top: 5px;
+}

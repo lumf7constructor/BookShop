@@ -20,7 +20,7 @@ const Login = () => {
     const data = await response.json();
 
     if (data.success) {
-      navigate("/manager"); // Redirect to manager page if login is successful
+      navigate("/analytics"); // Redirect to manager page if login is successful
     } else {
       setError("Invalid username or password");
     }

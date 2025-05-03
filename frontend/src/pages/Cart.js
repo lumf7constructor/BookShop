@@ -14,6 +14,9 @@ const Cart = () => {
     phone: "",
   });
 
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountMessage, setDiscountMessage] = useState("");
+
   // Calculate total price
   const totalPrice = cart.reduce(
     (sum, book) => sum + book.price * book.quantity,
@@ -33,6 +36,10 @@ const Cart = () => {
           : item
       )
     );
+  };
+
+  const handleDiscountChange = (e) => {
+    setDiscountCode(e.target.value);
   };
 
   const decreaseQuantity = (book_id) => {
@@ -55,57 +62,61 @@ const Cart = () => {
     setCustomerInfo({ ...customerInfo, [e.target.name]: e.target.value });
   };
 
-  const completeOrder = async () => {
-    if (
-      !customerInfo.firstName ||
-      !customerInfo.lastName ||
-      !customerInfo.address ||
-      !customerInfo.phone
-    ) {
-      alert("Please fill in all customer details before completing the order.");
-      return;
-    }
-  
-    // Get session_id from localStorage or generate one if it doesn't exist
-    const sessionId = localStorage.getItem("session_id") || generateSessionId();
-  
-    // Prepare the books array to send in the order
-    const books = cart.map((item) => ({
-      book_id: item.book_id,
-      quantity: item.quantity,
-      price: item.price,
-    }));
-  
-    const orderData = {
-      session_id: sessionId,  // Include session ID
-      customer_name: `${customerInfo.firstName} ${customerInfo.lastName}`,
-      phone: customerInfo.phone,
-      address: customerInfo.address,
-      books: books, // Send the books array
-    };
-  
-    // Send order details
-    try {
-      const response = await fetch("http://localhost:5000/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
-  
-      if (response.ok) {
-        alert("Order placed successfully!");
-        setCart([]);  // Clear cart after successful order
-        localStorage.removeItem("cart");  // Remove cart from localStorage
-        setCustomerInfo({ firstName: "", lastName: "", address: "", phone: "" });  // Reset form fields
-      } else {
-        const errorResponse = await response.json();
-        alert(`Failed to place order: ${errorResponse.error || "Unknown error"}`);
-      }
-    } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Error placing order. Please try again.");
-    }
+
+// CompleteOrder function
+const completeOrder = async () => {
+  if (
+    !customerInfo.firstName ||
+    !customerInfo.lastName ||
+    !customerInfo.address ||
+    !customerInfo.phone
+  ) {
+    alert("Please fill in all customer details before completing the order.");
+    return;
+  }
+
+  const sessionId = localStorage.getItem("session_id") || generateSessionId();
+
+  const books = cart.map((item) => ({
+    book_id: item.book_id,
+    quantity: item.quantity,
+    price: item.price,
+  }));
+
+  const orderData = {
+    session_id: sessionId,
+    customer_name: `${customerInfo.firstName} ${customerInfo.lastName}`,
+    phone: customerInfo.phone,
+    address: customerInfo.address,
+    books: books,
+    discount_code: discountCode || null  // Add this line
   };
+
+  try {
+    const response = await fetch("http://localhost:5000/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert(`Order placed successfully! ${data.discountApplied ? `Discount applied: ${data.discountApplied}` : ''}`);
+      setCart([]);
+      localStorage.removeItem("cart");
+      setCustomerInfo({ firstName: "", lastName: "", address: "", phone: "" });
+      setDiscountCode("");
+      setDiscountMessage("");
+    } else {
+      setDiscountMessage(data.message);
+      alert(`Failed to place order: ${data.message || "Unknown error"}`);
+    }
+  } catch (error) {
+    console.error("Error placing order:", error);
+    alert("Error placing order. Please try again.");
+  }
+};
   
 
   // Helper function to generate a new session ID if not present
@@ -170,6 +181,18 @@ const Cart = () => {
               value={customerInfo.phone}
               onChange={handleInputChange}
             />
+            <input
+              type="text"
+              name="discountCode"
+              placeholder="Discount Code (Optional)"
+              value={discountCode}
+              onChange={handleDiscountChange}
+            />
+            {discountMessage && (
+              <p className={discountMessage.includes("error") ? "error-message" : "success-message"}>
+                {discountMessage}
+              </p>
+            )}
             <button onClick={completeOrder}>Complete Order</button>
           </div>
         </div>
