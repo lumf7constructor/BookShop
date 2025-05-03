@@ -62,6 +62,8 @@ const Orders = () => {
       pdf.setFontSize(12);
       pdf.setTextColor(211, 47, 47);
       pdf.text(`Order Total: €${total.toFixed(2)}`, 14, finalY);
+
+      pdf.setTextColor(0, 0, 0); // Reset to black for next page or text
     });
 
     pdf.save('customer_orders.pdf');

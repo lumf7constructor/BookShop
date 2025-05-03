@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
-import "../styles/Cart.css"; // Import the CSS file
+import "../styles/Cart.css";
 
 const Cart = () => {
   const [cart, setCart] = useState(() => {
@@ -16,6 +16,8 @@ const Cart = () => {
 
   const [discountCode, setDiscountCode] = useState("");
   const [discountMessage, setDiscountMessage] = useState("");
+  const [discountedTotal, setDiscountedTotal] = useState(null);
+  const [discountPercentage, setDiscountPercentage] = useState(0);
 
   // Calculate total price
   const totalPrice = cart.reduce(
@@ -40,6 +42,47 @@ const Cart = () => {
 
   const handleDiscountChange = (e) => {
     setDiscountCode(e.target.value);
+    setDiscountedTotal(null);
+    setDiscountMessage("");
+  };
+
+  const validateDiscountCode = async () => {
+    if (!discountCode) {
+      setDiscountMessage("Please enter a discount code");
+      return;
+    }
+
+    try {
+      const currentDate = new Date().toISOString().split('T')[0];
+      const response = await fetch(`http://localhost:5000/validate-discount`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          discount_code: discountCode,
+          current_date: currentDate
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setDiscountPercentage(data.discount_percentage);
+        setDiscountMessage(`Discount code valid! ${data.discount_percentage}% off`);
+        const discountedAmount = totalPrice * (1 - data.discount_percentage / 100);
+        setDiscountedTotal(discountedAmount);
+      } else {
+        setDiscountMessage(data.message || "Invalid discount code");
+        setDiscountedTotal(null);
+        setDiscountPercentage(0);
+      }
+    } catch (error) {
+      console.error("Error validating discount:", error);
+      setDiscountMessage("Error validating discount code");
+      setDiscountedTotal(null);
+      setDiscountPercentage(0);
+    }
   };
 
   const decreaseQuantity = (book_id) => {
@@ -62,73 +105,71 @@ const Cart = () => {
     setCustomerInfo({ ...customerInfo, [e.target.name]: e.target.value });
   };
 
+  const completeOrder = async () => {
+    if (
+      !customerInfo.firstName ||
+      !customerInfo.lastName ||
+      !customerInfo.address ||
+      !customerInfo.phone
+    ) {
+      alert("Please fill in all customer details before completing the order.");
+      return;
+    }
 
-// CompleteOrder function
-const completeOrder = async () => {
-  if (
-    !customerInfo.firstName ||
-    !customerInfo.lastName ||
-    !customerInfo.address ||
-    !customerInfo.phone
-  ) {
-    alert("Please fill in all customer details before completing the order.");
-    return;
-  }
+    const sessionId = localStorage.getItem("session_id") || generateSessionId();
 
-  const sessionId = localStorage.getItem("session_id") || generateSessionId();
+    const books = cart.map((item) => ({
+      book_id: item.book_id,
+      quantity: item.quantity,
+      price: discountedTotal ? (item.price * (1 - discountPercentage / 100)) : item.price,
+    }));
 
-  const books = cart.map((item) => ({
-    book_id: item.book_id,
-    quantity: item.quantity,
-    price: item.price,
-  }));
+    const orderData = {
+      session_id: sessionId,
+      customer_name: `${customerInfo.firstName} ${customerInfo.lastName}`,
+      phone: customerInfo.phone,
+      address: customerInfo.address,
+      books: books,
+      discount_code: discountCode || null
+    };
 
-  const orderData = {
-    session_id: sessionId,
-    customer_name: `${customerInfo.firstName} ${customerInfo.lastName}`,
-    phone: customerInfo.phone,
-    address: customerInfo.address,
-    books: books,
-    discount_code: discountCode || null  // Add this line
+    try {
+      const response = await fetch("http://localhost:5000/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`Order placed successfully! ${data.discountApplied ? `Discount applied: ${data.discountApplied}` : ''}`);
+        setCart([]);
+        localStorage.removeItem("cart");
+        setCustomerInfo({ firstName: "", lastName: "", address: "", phone: "" });
+        setDiscountCode("");
+        setDiscountMessage("");
+        setDiscountedTotal(null);
+        setDiscountPercentage(0);
+      } else {
+        setDiscountMessage(data.message);
+        alert(`Failed to place order: ${data.message || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Error placing order. Please try again.");
+    }
   };
 
-  try {
-    const response = await fetch("http://localhost:5000/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert(`Order placed successfully! ${data.discountApplied ? `Discount applied: ${data.discountApplied}` : ''}`);
-      setCart([]);
-      localStorage.removeItem("cart");
-      setCustomerInfo({ firstName: "", lastName: "", address: "", phone: "" });
-      setDiscountCode("");
-      setDiscountMessage("");
-    } else {
-      setDiscountMessage(data.message);
-      alert(`Failed to place order: ${data.message || "Unknown error"}`);
-    }
-  } catch (error) {
-    console.error("Error placing order:", error);
-    alert("Error placing order. Please try again.");
-  }
-};
-  
-
-  // Helper function to generate a new session ID if not present
   const generateSessionId = () => {
     const newSessionId = "session_" + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem("session_id", newSessionId); // Store new session ID
+    localStorage.setItem("session_id", newSessionId);
     return newSessionId;
   };
 
   return (
     <div className="cart-container">
-      <Navbar /> {/* Add Navbar if needed */}
+      <Navbar />
       <h1>Your Cart</h1>
       {cart.length === 0 ? (
         <p>Your cart is empty. Please add some books to view the cart!</p>
@@ -146,10 +187,39 @@ const completeOrder = async () => {
                 <p>{book.quantity}</p>
                 <button onClick={() => decreaseQuantity(book.book_id)}>-</button>
               </div>
-              <button className="remove-btn" onClick={() => removeFromCart(book.book_id)}>Remove</button>
+              <button className="remove-btn" onClick={() => removeFromCart(book.book_id)}>
+                Remove
+              </button>
             </div>
           ))}
+          
           <h2 className="total">Total: ${totalPrice.toFixed(2)}</h2>
+
+          <div className="discount-section">
+            <div className="discount-input">
+              <input
+                type="text"
+                name="discountCode"
+                placeholder="Discount Code (Optional)"
+                value={discountCode}
+                onChange={handleDiscountChange}
+              />
+              <button 
+                onClick={validateDiscountCode}
+                className="validate-btn"
+              >
+                Validate Code
+              </button>
+            </div>
+            {discountMessage && (
+              <p className={discountMessage.includes("error") ? "error-message" : "success-message"}>
+                {discountMessage}
+              </p>
+            )}
+            {discountedTotal !== null && (
+              <h2 className="discounted-total">Total After Discount: ${discountedTotal.toFixed(2)}</h2>
+            )}
+          </div>
 
           <h2>Enter Your Details</h2>
           <div className="customer-form">
@@ -181,18 +251,6 @@ const completeOrder = async () => {
               value={customerInfo.phone}
               onChange={handleInputChange}
             />
-            <input
-              type="text"
-              name="discountCode"
-              placeholder="Discount Code (Optional)"
-              value={discountCode}
-              onChange={handleDiscountChange}
-            />
-            {discountMessage && (
-              <p className={discountMessage.includes("error") ? "error-message" : "success-message"}>
-                {discountMessage}
-              </p>
-            )}
             <button onClick={completeOrder}>Complete Order</button>
           </div>
         </div>

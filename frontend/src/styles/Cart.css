@@ -144,3 +144,56 @@ button:hover {
   font-size: 0.9em;
   margin-top: 5px;
 }
+
+.discount-section {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.discount-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.discount-input input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.validate-btn {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.validate-btn:hover {
+  background-color: #45a049;
+}
+
+.error-message {
+  color: #ff0000;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.success-message {
+  color: #4CAF50;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.discounted-total {
+  color: #4CAF50;
+  margin-top: 10px;
+  font-weight: bold;
+}

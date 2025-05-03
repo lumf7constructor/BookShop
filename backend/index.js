@@ -485,6 +485,39 @@ app.get("/api/analytics/low-stock", (req, res) => {
   });
 });
 
+// Validate Discount
+app.post('/validate-discount', (req, res) => {
+  const { discount_code, current_date } = req.body;
+
+  const discountQuery = `
+    SELECT discount_percentage 
+    FROM discount_code 
+    WHERE discount_code = ? 
+    AND validity_start_date <= ? 
+    AND validity_end_date >= ?
+  `;
+
+  db.query(discountQuery, [discount_code, current_date, current_date], (err, results) => {
+    if (err) {
+      return res.status(500).json({ 
+        status: 'error',
+        message: 'Error checking discount code' 
+      });
+    }
+
+    if (results.length > 0) {
+      res.json({
+        status: 'success',
+        discount_percentage: results[0].discount_percentage
+      });
+    } else {
+      res.status(400).json({ 
+        status: 'error',
+        message: 'Invalid or expired discount code' 
+      });
+    }
+  });
+});
 
 // Start the server
 app.listen(5000, () => {
