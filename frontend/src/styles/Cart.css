@@ -182,13 +182,13 @@ button:hover {
 
 .error-message {
   color: #ff0000;
-  font-size: 0.9em;
+  font-size: 0.8em;
   margin-top: 5px;
 }
 
 .success-message {
   color: #4CAF50;
-  font-size: 0.9em;
+  font-size: 0.8em;
   margin-top: 5px;
 }
 
