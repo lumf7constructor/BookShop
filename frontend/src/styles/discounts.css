@@ -89,3 +89,41 @@
 .discount-item p strong {
   color: #3f51b5;
 }
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: #fee2e2;
+  border-radius: 4px;
+}
+
+.add-discount-btn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.expired-title {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+  color: #64748b;
+}
+
+.expired-discounts .discount-item {
+  background-color: #f8fafc;
+  opacity: 0.8;
+}
+
+.expired-discounts .discount-info {
+  color: #64748b;
+}
+
+.expired-discounts .delete-btn {
+  background-color: #94a3b8;
+}
+
+.expired-discounts .delete-btn:hover {
+  background-color: #64748b;
+}

@@ -545,6 +545,31 @@ app.get('/api/analytics/monthly-revenue', (req, res) => {
   });
 });
 
+// Add this new endpoint
+app.get('/api/reviews/:bookId', (req, res) => {
+  const query = `
+    SELECT 
+      r.review_id,
+      r.customer_name,
+      r.rating,
+      r.review_text,
+      r.created_at,
+      b.title as book_title
+    FROM review r
+    JOIN book b ON r.book_id = b.book_id
+    WHERE r.book_id = ?
+    ORDER BY r.created_at DESC
+  `;
+
+  db.query(query, [req.params.bookId], (err, results) => {
+    if (err) {
+      console.error('Error fetching reviews:', err);
+      return res.status(500).json({ error: 'Error fetching reviews' });
+    }
+    res.json(results);
+  });
+});
+
 // Start the server
 app.listen(5000, () => {
   console.log("Server running on port 5000");

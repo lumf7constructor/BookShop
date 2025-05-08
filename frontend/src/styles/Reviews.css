@@ -136,3 +136,55 @@
     }
   }
   
+  .view-reviews-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .reviews-list {
+    margin-top: 2rem;
+  }
+  
+  .review-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background-color: #f9fafb;
+  }
+  
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .reviewer-name {
+    font-weight: bold;
+    color: #374151;
+  }
+  
+  .review-rating {
+    color: #fbbf24;
+  }
+  
+  .review-date {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+  .review-text {
+    color: #4b5563;
+    line-height: 1.5;
+  }
+  
+  .no-reviews {
+    text-align: center;
+    color: #6b7280;
+    padding: 2rem;
+    font-style: italic;
+  }
