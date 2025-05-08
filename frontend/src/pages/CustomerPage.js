@@ -7,7 +7,7 @@ const CustomerPage = () => {
   return (
     <div className="customer-page">
       <div className="overlay"></div> {/* Overlay for readability */}
-      <Navbar /> {/* Include the Navbar */}
+
       <h1>Hello, Customer</h1>
       <p className="customer-welcome">Discover your next favorite book today!</p>
 

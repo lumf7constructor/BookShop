@@ -7,12 +7,18 @@
   } */
   
   .reviews-container {
+    /* Remove or adjust the top margin to account for navbar */
     max-width: 900px;
-    margin: 70px auto 50px auto; /* Adds 20px margin above */
+    margin: 20px auto 50px auto; /* Reduced top margin */
     padding: 30px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Add this new wrapper class */
+  .page-wrapper {
+    width: 100%;
   }
  
   .reviews-heading {

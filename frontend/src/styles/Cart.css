@@ -6,13 +6,17 @@ body {
 }
 
 
+.page-wrapper {
+  width: 100%;
+}
+
 .cart-container {
   max-width: 800px;
-  margin: 40px auto;
+  margin: 20px auto; /* Reduced top margin */
   padding: 25px;
-  background: #ffffff; 
+  background: #ffffff;
   border-radius: 10px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08); 
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 
@@ -174,13 +178,13 @@ button:hover {
 
 .error-message {
   color: #ff0000;
-  font-size: 0.8em;
+  font-size: 1em;
   margin-top: 5px;
 }
 
 .success-message {
   color: #4CAF50;
-  font-size: 0.8em;
+  font-size: 1em;
   margin-top: 5px;
 }
 
@@ -188,4 +192,9 @@ button:hover {
   color: #4CAF50;
   margin-top: 10px;
   font-weight: bold;
+}
+
+.discounted-total {
+  font-size: 1.75em;
+
 }

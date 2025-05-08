@@ -45,7 +45,6 @@ const Reviews = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation: Ensure fields are filled
     if (!selectedBook || !customerName || !reviewText) {
       alert("Please fill in all fields.");
       return;
@@ -91,109 +90,111 @@ const Reviews = () => {
   };
 
   return (
-    <div className="reviews-container">
+    <div className="page-wrapper">
       <Navbar />
-      <div className="reviews-content">
-        <div className="write-review-section">
-          <h1 className="reviews-heading">Write a Review</h1>
-          <form onSubmit={handleSubmit} className="reviews-form">
+      <div className="reviews-container">
+        <div className="reviews-content">
+          <div className="write-review-section">
+            <h1 className="reviews-heading">Write a Review</h1>
+            <form onSubmit={handleSubmit} className="reviews-form">
+              <div className="form-group">
+                <label>Book:</label>
+                <select
+                  value={selectedBook}
+                  onChange={(e) => setSelectedBook(e.target.value)}
+                  className="select-group"
+                >
+                  <option value="">Select a book</option>
+                  {books.map((book) => (
+                    <option key={book.book_id} value={book.title}>
+                      {book.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Name:</label>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  className="form-control"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Rating:</label>
+                <select
+                  value={rating}
+                  onChange={(e) => setRating(Number(e.target.value))}
+                  className="select-group"
+                >
+                  {[1, 2, 3, 4, 5].map((num) => (
+                    <option key={num} value={num}>
+                      {num} {num === 1 ? "Star" : "Stars"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Review:</label>
+                <textarea
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  className="form-control"
+                  required
+                />
+              </div>
+
+              <button type="submit" disabled={loading} className="submit-btn">
+                {loading ? "Submitting..." : "Submit Review"}
+              </button>
+            </form>
+          </div>
+
+          <div className="view-reviews-section">
+            <h2>View Book Reviews</h2>
             <div className="form-group">
-              <label>Book:</label>
+              <label>Select a Book:</label>
               <select
-                value={selectedBook}
-                onChange={(e) => setSelectedBook(e.target.value)}
+                value={selectedBookForView}
+                onChange={handleBookSelect}
                 className="select-group"
               >
                 <option value="">Select a book</option>
                 {books.map((book) => (
-                  <option key={book.book_id} value={book.title}>
+                  <option key={book.book_id} value={book.book_id}>
                     {book.title}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="form-group">
-              <label>Name:</label>
-              <input
-                type="text"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Rating:</label>
-              <select
-                value={rating}
-                onChange={(e) => setRating(Number(e.target.value))}
-                className="select-group"
-              >
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <option key={num} value={num}>
-                    {num} {num === 1 ? "Star" : "Stars"}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Review:</label>
-              <textarea
-                value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
-                className="form-control"
-                required
-              />
-            </div>
-
-            <button type="submit" disabled={loading} className="submit-btn">
-              {loading ? "Submitting..." : "Submit Review"}
-            </button>
-          </form>
-        </div>
-
-        <div className="view-reviews-section">
-          <h2>View Book Reviews</h2>
-          <div className="form-group">
-            <label>Select a Book:</label>
-            <select
-              value={selectedBookForView}
-              onChange={handleBookSelect}
-              className="select-group"
-            >
-              <option value="">Select a book</option>
-              {books.map((book) => (
-                <option key={book.book_id} value={book.book_id}>
-                  {book.title}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="reviews-list">
-            {loadingReviews ? (
-              <p className="loading-text">Loading reviews...</p>
-            ) : bookReviews.length > 0 ? (
-              bookReviews.map((review) => (
-                <div key={review.review_id} className="review-card">
-                  <div className="review-header">
-                    <span className="reviewer-name">{review.customer_name}</span>
-                    <span className="review-rating">
-                      {"⭐".repeat(review.rating)}
-                    </span>
-                    <span className="review-date">
-                      {new Date(review.created_at).toLocaleDateString()}
-                    </span>
+            <div className="reviews-list">
+              {loadingReviews ? (
+                <p className="loading-text">Loading reviews...</p>
+              ) : bookReviews.length > 0 ? (
+                bookReviews.map((review) => (
+                  <div key={review.review_id} className="review-card">
+                    <div className="review-header">
+                      <span className="reviewer-name">{review.customer_name}</span>
+                      <span className="review-rating">
+                        {"⭐".repeat(review.rating)}
+                      </span>
+                      <span className="review-date">
+                        {new Date(review.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="review-text">{review.review_text}</p>
                   </div>
-                  <p className="review-text">{review.review_text}</p>
-                </div>
-              ))
-            ) : selectedBookForView ? (
-              <p className="no-reviews">No reviews made yet.</p>
-            ) : null}
+                ))
+              ) : selectedBookForView ? (
+                <p className="no-reviews">No reviews made yet.</p>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
