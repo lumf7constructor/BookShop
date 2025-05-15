@@ -25,6 +25,24 @@ const Orders = () => {
       });
   }, []);
 
+  const calculateTotal = (items) => {
+    const total = items.reduce((sum, item) => {
+      const itemPrice = parseFloat(item.price);
+      const quantity = parseInt(item.quantity);
+      const itemTotal = itemPrice * quantity;
+      // Multiply by 1000 to preserve 3 decimal places in calculations
+      return sum + Math.round(itemTotal * 1000);
+    }, 0);
+    // Convert from millicents to dollars and round to 2 decimals
+    return Math.round((total / 1000) * 100) / 100;
+  };
+  
+  const formatPrice = (price) => {
+    if (!price) return "0.00";
+    // Round to 2 decimal places
+    return (Math.round(parseFloat(price) * 100) / 100).toFixed(2);
+  };
+
   const exportToPDF = () => {
     const pdf = new jsPDF();
 
@@ -32,7 +50,7 @@ const Orders = () => {
       if (index > 0) pdf.addPage();
 
       const { customer_name, phone, address, created_at, discount_code } = items[0];
-      const total = items.reduce((sum, item) => sum + item.quantity * parseFloat(item.price), 0);
+      const total = calculateTotal(items);
 
       pdf.setFontSize(14);
       pdf.text(`Order #${orderId}`, 14, 20);
@@ -46,8 +64,8 @@ const Orders = () => {
       const tableData = items.map(item => [
         item.title,
         item.quantity,
-        `€${item.price}`,
-        `€${(item.quantity * parseFloat(item.price)).toFixed(2)}`
+        `$${formatPrice(item.price)}`,
+        `$${formatPrice(item.quantity * item.price)}`
       ]);
 
       autoTable(pdf, {
@@ -61,7 +79,7 @@ const Orders = () => {
       const finalY = pdf.lastAutoTable.finalY + 10;
       pdf.setFontSize(12);
       pdf.setTextColor(211, 47, 47);
-      pdf.text(`Order Total: €${total.toFixed(2)}`, 14, finalY);
+      pdf.text(`Order Total: $${formatPrice(total)}`, 14, finalY);
 
       pdf.setTextColor(0, 0, 0); // Reset to black for next page or text
     });
@@ -84,7 +102,8 @@ const Orders = () => {
         ) : (
           Object.entries(groupedOrders).map(([orderId, items]) => {
             const { customer_name, phone, address, created_at, discount_code } = items[0];
-            const total = items.reduce((sum, item) => sum + item.quantity * parseFloat(item.price), 0);
+            const total = calculateTotal(items);
+            
             return (
               <div className="order-card" key={orderId}>
                 <h2>Order #{orderId}</h2>
@@ -100,11 +119,13 @@ const Orders = () => {
                     <li key={index}>
                       <span>{item.title}</span>
                       <span>Qty: {item.quantity}</span>
+                      <span>Price: ${formatPrice(item.price)}</span>
+                      <span>Subtotal: ${formatPrice(item.quantity * item.price)}</span>
                     </li>
                   ))}
                 </ul>
 
-                <p className="total">Total: €{total.toFixed(2)}</p>
+                <p className="total">Total: ${formatPrice(total)}</p>
               </div>
             );
           })

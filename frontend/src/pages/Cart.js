@@ -18,11 +18,23 @@ const Cart = () => {
   const [discountMessage, setDiscountMessage] = useState("");
   const [discountedTotal, setDiscountedTotal] = useState(null);
   const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const totalPrice = cart.reduce(
-    (sum, book) => sum + book.price * book.quantity,
-    0
-  );
+  const calculateTotal = (items) => {
+    const total = items.reduce((sum, item) => {
+      const itemPrice = parseFloat(item.price);
+      const quantity = parseInt(item.quantity);
+      const itemTotal = Math.round(itemPrice * quantity * 100); // Convert to cents
+      return sum + itemTotal;
+    }, 0);
+    return (total / 100); // Convert back to dollars
+  };
+
+  const formatPrice = (price) => {
+    return (Math.round(parseFloat(price) * 100) / 100).toFixed(2);
+  };
+
+  const totalPrice = calculateTotal(cart);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -55,9 +67,10 @@ const Cart = () => {
   };
 
   const handleDiscountChange = (e) => {
-    setDiscountCode(e.target.value);
+    setDiscountCode(e.target.value.toUpperCase());
     setDiscountedTotal(null);
     setDiscountMessage("");
+    setDiscountPercentage(0);
   };
 
   const validateDiscountCode = async () => {
@@ -66,6 +79,7 @@ const Cart = () => {
       return;
     }
 
+    setLoading(true);
     try {
       const currentDate = new Date().toISOString().split('T')[0];
       const response = await fetch(`http://localhost:5000/validate-discount`, {
@@ -81,13 +95,14 @@ const Cart = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.ok && data.status === 'success') {
         setDiscountPercentage(data.discount_percentage);
-        setDiscountMessage(`Discount code valid! ${data.discount_percentage}% off`);
-        const discountedAmount = totalPrice * (1 - data.discount_percentage / 100);
+        const discountAmount = Math.round(totalPrice * (data.discount_percentage / 100) * 100) / 100;
+        const discountedAmount = Math.round((totalPrice - discountAmount) * 100) / 100;
         setDiscountedTotal(discountedAmount);
+        setDiscountMessage(`Discount code valid! ${data.discount_percentage}% off`);
       } else {
-        setDiscountMessage(`error: ${data.message || "Invalid discount code"}`);
+        setDiscountMessage(`error: ${data.message}`);
         setDiscountedTotal(null);
         setDiscountPercentage(0);
       }
@@ -96,6 +111,8 @@ const Cart = () => {
       setDiscountMessage("error: Error validating discount code");
       setDiscountedTotal(null);
       setDiscountPercentage(0);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,22 +121,24 @@ const Cart = () => {
   };
 
   const completeOrder = async () => {
-    if (
-      !customerInfo.firstName ||
-      !customerInfo.lastName ||
-      !customerInfo.address ||
-      !customerInfo.phone
-    ) {
-      setDiscountMessage("error: Please fill in all customer details before completing the order.");
+    if (!customerInfo.firstName || !customerInfo.lastName || 
+        !customerInfo.address || !customerInfo.phone) {
+      setDiscountMessage("error: Please fill in all customer details");
       return;
     }
 
+    if (cart.length === 0) {
+      setDiscountMessage("error: Your cart is empty");
+      return;
+    }
+
+    setLoading(true);
     const sessionId = localStorage.getItem("session_id") || generateSessionId();
 
     const books = cart.map((item) => ({
       book_id: item.book_id,
       quantity: item.quantity,
-      price: discountedTotal ? (item.price * (1 - discountPercentage / 100)) : item.price,
+      price: parseFloat((item.price))
     }));
 
     const orderData = {
@@ -128,7 +147,7 @@ const Cart = () => {
       phone: customerInfo.phone,
       address: customerInfo.address,
       books: books,
-      discount_code: discountCode || null
+      discount_code: discountedTotal !== null ? discountCode : null
     };
 
     try {
@@ -141,7 +160,8 @@ const Cart = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(`Order placed successfully! ${data.discountApplied ? `Discount applied: ${data.discountApplied}` : ''}`);
+        alert(`Order placed successfully! ${data.discountApplied ? 
+          `Discount applied: ${data.discountApplied}` : ''}`);
         setCart([]);
         localStorage.removeItem("cart");
         setCustomerInfo({ firstName: "", lastName: "", address: "", phone: "" });
@@ -155,6 +175,8 @@ const Cart = () => {
     } catch (error) {
       console.error("Error placing order:", error);
       setDiscountMessage("error: Error placing order. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -178,20 +200,30 @@ const Cart = () => {
                 <div>
                   <h2>{book.title}</h2>
                   <p>Author: {book.author}</p>
-                  <p>Price: ${book.price}</p>
+                  <p>Price: ${formatPrice(book.price)}</p>
                 </div>
                 <div className="quantity-controls">
-                  <button onClick={() => increaseQuantity(book.book_id)}>+</button>
+                  <button 
+                    onClick={() => increaseQuantity(book.book_id)}
+                    disabled={loading}
+                  >+</button>
                   <p>{book.quantity}</p>
-                  <button onClick={() => decreaseQuantity(book.book_id)}>-</button>
+                  <button 
+                    onClick={() => decreaseQuantity(book.book_id)}
+                    disabled={loading}
+                  >-</button>
                 </div>
-                <button className="remove-btn" onClick={() => removeFromCart(book.book_id)}>
+                <button 
+                  className="remove-btn" 
+                  onClick={() => removeFromCart(book.book_id)}
+                  disabled={loading}
+                >
                   Remove
                 </button>
               </div>
             ))}
             
-            <h2 className="total">Total: ${totalPrice.toFixed(2)}</h2>
+            <h2 className="total">Total: ${formatPrice(totalPrice)}</h2>
 
             <div className="discount-section">
               <div className="discount-input">
@@ -201,12 +233,14 @@ const Cart = () => {
                   placeholder="Discount Code (Optional)"
                   value={discountCode}
                   onChange={handleDiscountChange}
+                  disabled={loading}
                 />
                 <button 
                   onClick={validateDiscountCode}
                   className="validate-btn"
+                  disabled={loading || !discountCode}
                 >
-                  Validate Code
+                  {loading ? "Validating..." : "Validate Code"}
                 </button>
               </div>
               {discountMessage && (
@@ -215,7 +249,9 @@ const Cart = () => {
                 </p>
               )}
               {discountedTotal !== null && (
-                <h2 className="discounted-total">Total After Discount: ${discountedTotal.toFixed(2)}</h2>
+                <h2 className="discounted-total">
+                  Total After Discount: ${formatPrice(discountedTotal)}
+                </h2>
               )}
             </div>
 
@@ -227,6 +263,7 @@ const Cart = () => {
                 placeholder="First Name"
                 value={customerInfo.firstName}
                 onChange={handleInputChange}
+                disabled={loading}
               />
               <input
                 type="text"
@@ -234,6 +271,7 @@ const Cart = () => {
                 placeholder="Last Name"
                 value={customerInfo.lastName}
                 onChange={handleInputChange}
+                disabled={loading}
               />
               <input
                 type="text"
@@ -241,6 +279,7 @@ const Cart = () => {
                 placeholder="Address"
                 value={customerInfo.address}
                 onChange={handleInputChange}
+                disabled={loading}
               />
               <input
                 type="text"
@@ -248,8 +287,14 @@ const Cart = () => {
                 placeholder="Phone Number"
                 value={customerInfo.phone}
                 onChange={handleInputChange}
+                disabled={loading}
               />
-              <button onClick={completeOrder}>Complete Order</button>
+              <button 
+                onClick={completeOrder}
+                disabled={loading || cart.length === 0}
+              >
+                {loading ? "Processing..." : "Complete Order"}
+              </button>
             </div>
           </div>
         )}

@@ -149,11 +149,11 @@ app.post('/order', (req, res) => {
 
       // Calculate discounted prices if applicable
       const orderDetails = books.map((book) => {
-        const originalPrice = book.price;
+        const originalPrice = parseFloat(book.price);
         const discountedPrice = discountPercentage > 0 
-          ? originalPrice * (1 - discountPercentage / 100)
+          ? parseFloat((originalPrice * (1 - discountPercentage / 100)).toFixed(7))
           : originalPrice;
-
+      
         return [
           orderId,
           book.book_id,

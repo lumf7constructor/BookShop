@@ -29,65 +29,140 @@
 
 .order-card h2 {
   font-size: 1.4rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   color: #1565c0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e0e0e0;
 }
 
 .order-card p {
-  margin: 0.3rem 0;
+  margin: 0.5rem 0;
   font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .order-card strong {
   color: #333;
+  min-width: 100px;
+  display: inline-block;
 }
 
 .order-card ul {
   list-style-type: none;
   padding: 0;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .order-card li {
-  background-color: #f0f0f0;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
+  background-color: #f8f9fa;
+  padding: 1rem;
   margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: space-between;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1rem;
   align-items: center;
+  transition: background-color 0.2s ease;
 }
 
-.order-card li::before {
-  content: '📘';
-  margin-right: 0.5rem;
+.order-card li:hover {
+  background-color: #f0f0f0;
+}
+
+.order-card li span {
+  font-size: 0.9rem;
+}
+
+.order-card li span:first-child {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.order-card li span:not(:first-child) {
+  text-align: right;
+  color: #444;
 }
 
 .order-card h3 {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  color: #388e3c;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-size: 1.2rem;
 }
 
 .order-card .total {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #d32f2f;
+  text-align: right;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #e0e0e0;
 }
 
 .export-button {
   background-color: #1976d2;
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.5rem;
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  margin-bottom: 1.5rem;
-  transition: background-color 0.2s ease;
+  margin-bottom: 2rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .export-button:hover {
   background-color: #1565c0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.export-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .order-card li {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
+
+  .order-card li span {
+    text-align: left;
+  }
+
+  .order-card li span:not(:first-child) {
+    text-align: left;
+  }
+
+  .order-card strong {
+    min-width: auto;
+    margin-right: 0.5rem;
+  }
+
+  .orders-page {
+    padding: 1rem;
+  }
+
+  .export-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Loading state */
+.orders-page > p {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #666;
 }
