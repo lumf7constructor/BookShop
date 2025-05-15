@@ -22,7 +22,7 @@ const Stocks = () => {
   }, []);
 
   const fetchBooks = async () => {
-    const res = await fetch('http://localhost:5000/books');  // Corrected endpoint
+    const res = await fetch('http://localhost:5000/books');  
     const data = await res.json();
     console.log("Books fetched:", data);  // Log to check data
     setBooks(data);
@@ -52,16 +52,14 @@ const Stocks = () => {
   };
 
   const handleReduceStock = async () => {
-    // Check if selectedBookDetails and deleteQuantity are valid
     if (!selectedBookDetails || !deleteQuantity || deleteQuantity <= 0) {
       alert("Please select a book and a valid quantity.");
       return;
     }
   
-    const { book_id } = selectedBookDetails; // Get book_id from selectedBookDetails
+    const { book_id } = selectedBookDetails; 
     const reduce_by = parseInt(deleteQuantity); // Get the quantity to reduce
     
-    // Make the PUT request to reduce stock
     try {
       const res = await fetch('http://localhost:5000/api/books/reduce-stock', {
         method: 'PUT',

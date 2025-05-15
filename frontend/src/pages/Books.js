@@ -6,9 +6,9 @@ const Book = () => {
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [sortOption, setSortOption] = useState("");
-  const [searchQuery, setSearchQuery] = useState(""); // Track the search query
-  const [suggestions, setSuggestions] = useState([]); // Track search suggestions
-  const [cart, setCart] = useState([]); // Cart state
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [suggestions, setSuggestions] = useState([]); 
+  const [cart, setCart] = useState([]); 
 
   const sessionId = "session-id-placeholder"; 
 
@@ -40,30 +40,23 @@ const Book = () => {
   };
 
   const addToCart = (book) => {
-    // Check if the book is already in the cart
     const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
   
-    // Check if the book already exists in the cart
     const existingBook = existingCart.find((item) => item.book_id === book.book_id);
   
     if (existingBook) {
-      // If book exists, increase quantity
       existingBook.quantity += 1;
     } else {
-      // Otherwise, add the book with quantity 1
       book.quantity = 1;
       existingCart.push(book);
     }
   
-    // Update the cart in localStorage
     localStorage.setItem("cart", JSON.stringify(existingCart));
   
-    // Update the cart state for immediate UI feedback
     setCart(existingCart);
   };
   
 
-  // Checkout process (send order to backend)
   const handleCheckout = () => {
     const customerDetails = {
       session_id: sessionId,

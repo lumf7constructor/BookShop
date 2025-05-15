@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar2 from '../pages/Navbar2'; // Use your manager navbar
-import '../styles/manager.css'; // Optional: create this if you want custom styles
+import '../styles/manager.css';
 
 const ManagerPage = () => {
   return (

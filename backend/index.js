@@ -16,9 +16,9 @@ app.use(express.json());
 // MySQL connection
 const db = mysql.createConnection({
   host: "localhost",
-  user: "mern_user",  // Change if needed
-  password: "your_password",  // Change if needed
-  database: "bookshop",  // Change if needed
+  user: "mern_user", 
+  password: "your_password", 
+  database: "bookshop",  
 });
 
 db.connect((err) => {
@@ -344,7 +344,6 @@ app.put("/api/books/increase-stock", (req, res) => {
 });
 
 
-// Add this new route to fetch full order info
 app.get('/api/orders/full-orders', (req, res) => {
   const query = `
     SELECT 
@@ -412,7 +411,6 @@ app.get('/api/discounts', (req, res) => {
 });
 
 
-// Example for handling POST request to add a new discount
 app.post('/api/discounts', (req, res) => {
   const { discount_code, validity_start_date, validity_end_date, discount_percentage } = req.body;
 
@@ -545,7 +543,6 @@ app.get('/api/analytics/monthly-revenue', (req, res) => {
   });
 });
 
-// Add this new endpoint
 app.get('/api/reviews/:bookId', (req, res) => {
   const query = `
     SELECT 
@@ -567,6 +564,34 @@ app.get('/api/reviews/:bookId', (req, res) => {
       return res.status(500).json({ error: 'Error fetching reviews' });
     }
     res.json(results);
+  });
+});
+
+app.delete('/api/discounts/:id', (req, res) => {
+  const { id } = req.params;
+  
+  const query = 'DELETE FROM discount_code WHERE discount_id = ?';
+  
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error('Error deleting discount:', err);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Error deleting discount code'
+      });
+    }
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Discount code not found'
+      });
+    }
+    
+    res.json({
+      status: 'success',
+      message: 'Discount code deleted successfully'
+    });
   });
 });
 

@@ -24,10 +24,10 @@ const Cart = () => {
     const total = items.reduce((sum, item) => {
       const itemPrice = parseFloat(item.price);
       const quantity = parseInt(item.quantity);
-      const itemTotal = Math.round(itemPrice * quantity * 100); // Convert to cents
+      const itemTotal = Math.round(itemPrice * quantity * 100); 
       return sum + itemTotal;
     }, 0);
-    return (total / 100); // Convert back to dollars
+    return (total / 100); 
   };
 
   const formatPrice = (price) => {

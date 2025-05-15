@@ -30,10 +30,10 @@ const Orders = () => {
       const itemPrice = parseFloat(item.price);
       const quantity = parseInt(item.quantity);
       const itemTotal = itemPrice * quantity;
-      // Multiply by 1000 to preserve 3 decimal places in calculations
+      
       return sum + Math.round(itemTotal * 1000);
     }, 0);
-    // Convert from millicents to dollars and round to 2 decimals
+    
     return Math.round((total / 1000) * 100) / 100;
   };
   
